@@ -1,0 +1,10 @@
+#Battle Properties
+#Fri Sep 28 13:38:30 CEST 2018
+robocode.battle.numRounds=10
+robocode.battle.rules.inactivityTime=450
+robocode.battle.hideEnemyNames=false
+robocode.battle.gunCoolingRate=0.1
+robocode.battleField.height=600
+robocode.battleField.width=800
+robocode.battle.sentryBorderSize=100
+robocode.battle.selectedRobots=sample.Corners,sample.Crazy,sample.Fire,sample.MyFirstJuniorRobot,sample.MyFirstRobot,sample.PaintingRobot,sample.RamFire,sample.SittingDuck,sample.SpinBot,sample.Target,sample.Tracker,ch.zuehlke.semu.SimpleSpinBot*
