@@ -1,9 +1,11 @@
 package UL;
+import org.apache.bcel.generic.ReturnaddressType;
 import robocode.*;
 import robocode.Robot;
 import robocode.util.Utils;
 
 import java.awt.*;
+import java.util.Random;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -14,6 +16,8 @@ public class  Timmy extends Robot {
     int xIndex = -2;
     int yIndex = -1;
     boolean SentryScanned = false;
+    Random random = new Random();
+    int bound = 5;
 
     public void move(double[] locations){
     while(getEnergy() > 0) {
@@ -61,7 +65,7 @@ public class  Timmy extends Robot {
 
     public void run(){
         superScan();
-        move(getPositions(50, 100));
+        move(getPositions(30, 100));
     }
     boolean scan = false;
     //inspiration form UL COFFEE
@@ -120,11 +124,20 @@ public class  Timmy extends Robot {
         }else {
             turnRight(goAngle);
         }
-        ahead(distance/2);
+
+        if (random.nextInt(bound)%bound == 0){
+            ahead(distance/2);
+//            fire(1.1);
+            ahead(distance/2);
+        }
+        else {
+            ahead(distance);
+        }
+
         //shoot shithere
         //this makes timmy die more
-        fire(1.1);
-        ahead(distance/2);
+
+
     }
 
     public void onScannedRobot(ScannedRobotEvent event){
@@ -142,7 +155,7 @@ public class  Timmy extends Robot {
             SentryScanned = true;
             scan = false;
         }
-        else if(event.isSentryRobot() && SentryScanned){
+        else if(!event.isSentryRobot()){
 
         }
     }
