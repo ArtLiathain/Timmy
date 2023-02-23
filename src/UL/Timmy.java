@@ -120,7 +120,11 @@ public class  Timmy extends Robot {
         }else {
             turnRight(goAngle);
         }
-        ahead(distance);
+        ahead(distance/2);
+        //shoot shithere
+        //this makes timmy die more
+        fire(1.1);
+        ahead(distance/2);
     }
 
     public void onScannedRobot(ScannedRobotEvent event){
