@@ -120,7 +120,6 @@ public class  Timmy extends Robot {
         }else {
             turnRight(goAngle);
         }
-
         ahead(distance);
     }
 
@@ -152,6 +151,20 @@ public class  Timmy extends Robot {
         return Pos;
     }
 
-
+    //taken from rainbow warrior - pretty colours yay
+    public void onWin(WinEvent event){
+        while(true){
+            dance();
+        }
+    }
+    public void dance(){
+        Color bColor =			new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
+        Color gColor = 			new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
+        Color rColor =			new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
+        Color bulletColor =  	new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
+        Color scanArcColor =  	new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
+        setColors(bColor,gColor,rColor,bulletColor, scanArcColor);
+        turnRadarRight(45);
+    }
 
 }
