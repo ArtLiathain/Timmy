@@ -18,7 +18,7 @@ public class  Timmy extends Robot {
     boolean SentryScanned = false;
     Random random = new Random();
     int bound = 5;
-
+    double[] badRobotPos = {0,0,0};
     public void move(double[] locations){
     while(getEnergy() > 0) {
         if (xIndex < 4) {
@@ -125,19 +125,30 @@ public class  Timmy extends Robot {
             turnRight(goAngle);
         }
 
-        if (random.nextInt(bound)%bound == 0){
-            ahead(distance/2);
-//            fire(1.1);
-            ahead(distance/2);
+        scan();
+        //will randomly shoot once reaches corner
+        if(!onLine(badRobotPos,x_dest,y_dest,distance)) {
+            if (random.nextInt(bound) % bound == 0) {
+                ahead(distance);
+                fire(1);
+                dance();
+            } else {
+                ahead(distance);
+            }
+        }else{
+
         }
-        else {
-            ahead(distance);
-        }
-
-        //shoot shithere
-        //this makes timmy die more
 
 
+    }
+    public boolean onLine(double[] badRobotPos, double x_dest, double y_dest,double distance){
+        double slope = (y_dest-getY())/(x_dest-getX());
+        for(int i = 0;i < distance;i++){
+            if(badRobotPos[1]-y_dest==slope*(badRobotPos[0]-x_dest)){
+                System.out.print("online");
+                return true;
+            }
+        }return false;
     }
 
     public void onScannedRobot(ScannedRobotEvent event){
@@ -156,7 +167,8 @@ public class  Timmy extends Robot {
             scan = false;
         }
         else if(!event.isSentryRobot()){
-
+            badRobotPos = GetXY(event.getBearing(), getHeading(), event.getDistance());
+            System.out.print(badRobotPos[0]);
         }
     }
 
@@ -181,7 +193,7 @@ public class  Timmy extends Robot {
         Color bulletColor =  	new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
         Color scanArcColor =  	new Color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
         setColors(bColor,gColor,rColor,bulletColor, scanArcColor);
-        turnRadarRight(45);
+
     }
 
 }
