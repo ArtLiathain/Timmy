@@ -127,27 +127,16 @@ public class  Timmy extends Robot {
 
         scan();
         //will randomly shoot once reaches corner
-        if(!onLine(badRobotPos,x_dest,y_dest,distance)) {
-            if (random.nextInt(bound) % bound == 0) {
-                ahead(distance);
-                fire(1);
-                dance();
-            } else {
-                ahead(distance);
-            }
-        }else{
 
-        }
 
 
     }
     public boolean onLine(double[] badRobotPos, double x_dest, double y_dest,double distance){
         double slope = (y_dest-getY())/(x_dest-getX());
-        for(int i = 0;i < distance;i++){
-            if(badRobotPos[1]-y_dest==slope*(badRobotPos[0]-x_dest)){
+        System.out.print("check");
+        if(badRobotPos[1]-y_dest==slope*(badRobotPos[0]-x_dest)){
                 System.out.print("online");
                 return true;
-            }
         }return false;
     }
 
@@ -167,9 +156,26 @@ public class  Timmy extends Robot {
             scan = false;
         }
         else if(!event.isSentryRobot()){
-            badRobotPos = GetXY(event.getBearing(), getHeading(), event.getDistance());
-            System.out.print(badRobotPos[0]);
+            double[] badRobotPos = GetXY(event.getBearing(), getHeading(), event.getDistance());
+            if(sentryY == -1) {
+                turnLeft(90);
+                //or -= 90 (depends on direction
+                ahead(50);
+                turnLeft(90);
+                ahead(event.getDistance());
+                turnLeft(90);
+                ahead(50);
+            }else if(sentryY == 1) {
+                turnRight(90);
+                //or -= 90 (depends on direction
+                ahead(50);
+                turnRight(90);
+                ahead(event.getDistance());
+                turnRight(90);
+                ahead(50);
+            }
         }
+
     }
 
     public double[] GetXY(double bearing, double heading, double distance){
