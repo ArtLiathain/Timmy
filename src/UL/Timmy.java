@@ -10,17 +10,21 @@ import java.util.Random;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
-public class  Timmy extends Robot {
+public class Timmy extends Robot {
     public int sentryX = -1;
     public int sentryY = -1;
     int xIndex = -2;
     int yIndex = -1;
     boolean SentryScanned = false;
+    double[] radarP = new double[2];
     Random random = new Random();
+    double gunPoint;
     int bound = 5;
 
+    double scannerRotation[] = new double[2];
     public void move(double[] locations){
     while(getEnergy() > 0) {
+
         if (xIndex < 4) {
             xIndex += 2;
             yIndex += 2;
@@ -29,7 +33,24 @@ public class  Timmy extends Robot {
             yIndex = 1;
         }
         goTo(locations[xIndex], locations[yIndex]);
+        moveGun();
+        normalScan(radarP);
     }
+    }
+
+    public void moveGun(){
+        double realGunPoint = getGunHeading();
+        if(realGunPoint == gunPoint){
+            return;
+        }
+        else if(realGunPoint > gunPoint+20){
+            turnGunLeft(30);
+        }
+        else if(realGunPoint < gunPoint-20){
+            turnGunRight(30);
+        }
+
+
     }
     public double[] getPositions(double paddingside, double paddingmid){
         double SentryBorder = getSentryBorderSize();
@@ -43,42 +64,89 @@ public class  Timmy extends Robot {
         if(sentryX == -1 &&  sentryY == -1){
             this.out.println("BOTTOM LECT");
             double[] locations = {paddingside,paddingside,paddingside, midY -paddingmid,midX -paddingmid,paddingside};
+            radarP[0] = 0;
+            radarP[1] = 90;
+            gunPoint = 45;
             return locations;
         }
         else if(sentryX == -1 && sentryY == 1){
             this.out.println("TOP LEFT");
             double[] locations = {paddingside,tempy,midX - paddingmid, tempy,paddingside,midY + paddingmid};
+            radarP[0] = 90;
+            radarP[1] = 180;
+            gunPoint = 135;
             return locations;
         }
         else if(sentryX == 1 && sentryY == -1){
             this.out.println("BOTTOM RIGHT");
             double[] locations = {tempx,paddingside,midX + paddingmid, paddingside,tempx,midY - paddingmid};
+            radarP[0] = 270;
+            radarP[1] = 360;
+            gunPoint = 315;
             return locations;
         }
         else if(sentryX == 1 && sentryY == 1){
             this.out.println("TOP RIGHT");
             double[] locations = {tempx, tempy, tempx ,midY + paddingmid ,midX + paddingmid, tempy};
+            radarP[0] = 180;
+            radarP[1] = 270;
+            gunPoint = 215;
             return locations;
         }
         return null;
     }
 
     public void run(){
+        setAdjustRadarForRobotTurn(true);
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
         superScan();
         move(getPositions(30, 100));
     }
     boolean scan = false;
     //inspiration form UL COFFEE
     public void superScan(){
+
         int max = 0;
-        int degrees = 30;
-        scan = true;
-        while(scan){
+        int degrees = 45;
+        while(true){
             turnRadarRight(degrees);
             max += degrees;
 
             if(max > 360){
                 break;
+            }
+        }
+        double radarH = getRadarHeading();
+        if(radarH > 180){
+            turnRadarRight(360 - radarH);
+        }
+        else{
+            turnRadarLeft(radarH);
+        }
+    }
+
+    public void normalScan(double[] radarP){
+        double radarH = getRadarHeading();
+        if(radarP[1] == 360 && radarH ==0){
+            radarH = 360;
+        }
+        int degrees = 45;
+        if(radarH == radarP[0]){
+            while(radarH < radarP[1]) {
+                turnRadarRight(degrees);
+                radarH += degrees;
+            }
+        } else if (radarH == radarP[1]) {
+            while(radarH > radarP[0]) {
+                turnRadarLeft(degrees);
+                radarH -= degrees;
+            }
+        }
+        else{
+            while(radarH < radarP[0]) {
+                turnRadarRight(degrees);
+                radarH += degrees;
             }
         }
     }
@@ -89,7 +157,7 @@ public class  Timmy extends Robot {
     private void goTo(double x, double y) {
         double x_dest = x - getX();
         double y_dest = y - getY();
-
+        out.println("going to" + x + " y:" + y);
         double goAngle = 0;
 
         double distance = Math.hypot(x_dest, y_dest);
@@ -153,7 +221,6 @@ public class  Timmy extends Robot {
                 sentryY = 1;
             }
             SentryScanned = true;
-            scan = false;
         }
         else if(!event.isSentryRobot()){
 
