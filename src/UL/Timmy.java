@@ -20,11 +20,15 @@ public class Timmy extends Robot {
     Random random = new Random();
     double gunPoint;
     int bound = 5;
+    boolean isInTriangle = false;
+    boolean canShoot = false;
+
+    double[] EnemyPos = new double[2];
 
     double scannerRotation[] = new double[2];
     public void move(double[] locations){
     while(getEnergy() > 0) {
-
+        canShoot = false;
         if (xIndex < 4) {
             xIndex += 2;
             yIndex += 2;
@@ -33,25 +37,18 @@ public class Timmy extends Robot {
             yIndex = 1;
         }
         goTo(locations[xIndex], locations[yIndex]);
-        moveGun();
-        normalScan(radarP);
-    }
-    }
-
-    public void moveGun(){
-        double realGunPoint = getGunHeading();
-        if(realGunPoint == gunPoint){
-            return;
-        }
-        else if(realGunPoint > gunPoint+20){
-            turnGunLeft(30);
-        }
-        else if(realGunPoint < gunPoint-20){
-            turnGunRight(30);
+        isInTriangle = true;
+        if(xIndex != 0){
+            canShoot = true;
+            normalScan();
+            normalScan();
         }
 
 
+
     }
+    }
+
     public double[] getPositions(double paddingside, double paddingmid){
         double SentryBorder = getSentryBorderSize();
         double border_x = getBattleFieldWidth();
@@ -126,13 +123,15 @@ public class Timmy extends Robot {
         }
     }
 
-    public void normalScan(double[] radarP){
-        double radarH = getRadarHeading();
+    public void normalScan(){
+        double radarD = getRadarHeading();
+        int radarH = (int) Math.round(radarD);
+        this.out.println("Radar Heading " + radarH + "Radarpos" + radarP[1] +"mmmm"+ radarP[0] );
         if(radarP[1] == 360 && radarH ==0){
             radarH = 360;
         }
         int degrees = 45;
-        if(radarH == radarP[0]){
+        if(Math.round(radarH) == radarP[0]){
             while(radarH < radarP[1]) {
                 turnRadarRight(degrees);
                 radarH += degrees;
@@ -143,12 +142,14 @@ public class Timmy extends Robot {
                 radarH -= degrees;
             }
         }
+
         else{
             while(radarH < radarP[0]) {
                 turnRadarRight(degrees);
                 radarH += degrees;
             }
         }
+        this.out.println("Scanning");
     }
 
     // yoinked from https://robowiki.net/wiki/GoTo and modified for Robot
@@ -222,15 +223,36 @@ public class Timmy extends Robot {
             }
             SentryScanned = true;
         }
-        else if(!event.isSentryRobot()){
+        else if(!event.isSentryRobot() && isInTriangle && canShoot){
+            double targetBearing = event.getBearing();
+            double[] EnemyPos = GetXY(targetBearing, getHeading(), event.getDistance());
+            shootGun(targetBearing, event.getDistance());
+        }
+    }
 
+    public void shootGun(double bearing, double distance){
+        double gunHeading = getGunHeading();
+        double heading = getHeading();
+        double absoluteBearing = heading + bearing;
+        double bearingFromGun = Utils.normalRelativeAngleDegrees(absoluteBearing - gunHeading);
+        turnGunRight(bearingFromGun);
+        smartFire(distance);
+    }
+
+    //Ul contessa bullet power code
+    public void smartFire(double robotDistance) {
+        if (robotDistance > 400) {
+            fire(1);
+        } else if (robotDistance > 200) {
+            fire(2);
+        } else {
+            fire(3);
         }
     }
 
     public double[] GetXY(double bearing, double heading, double distance){
         double absBearing = bearing + heading;
         absBearing = Math.toRadians(absBearing);
-        this.out.println(bearing + ":" + heading + ":" + distance);
         double[] Pos = {distance*Math.sin(absBearing),distance*Math.cos(absBearing)};
         return Pos;
     }
