@@ -124,9 +124,8 @@ public class  Timmy extends Robot {
         }else {
             turnRight(goAngle);
         }
-
-        scan();
         //will randomly shoot once reaches corner
+        ahead(distance);
 
 
 
@@ -162,7 +161,7 @@ public class  Timmy extends Robot {
                 //or -= 90 (depends on direction
                 ahead(50);
                 turnLeft(90);
-                ahead(event.getDistance());
+                ahead(event.getDistance()*2);
                 turnLeft(90);
                 ahead(50);
             }else if(sentryY == 1) {
@@ -170,7 +169,7 @@ public class  Timmy extends Robot {
                 //or -= 90 (depends on direction
                 ahead(50);
                 turnRight(90);
-                ahead(event.getDistance());
+                ahead(event.getDistance()*2);
                 turnRight(90);
                 ahead(50);
             }
