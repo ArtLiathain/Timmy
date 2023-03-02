@@ -20,9 +20,7 @@ public class TimmyAtUL extends Robot {
     private int yIndex = -1;
     private boolean SentryScanned = false;
     private double[] radarP = new double[2];
-    private Random random = new Random();
     private double gunPoint;
-    private int bound = 5;
     private boolean enemyScanned = false;
     boolean isInTriangle = false;
     boolean hasAdjusted = false;
@@ -60,12 +58,16 @@ public class TimmyAtUL extends Robot {
             this.out.println("BOTTOM LECT");
             double[] locations = {paddingside,paddingside,paddingside, midY -paddingmid,midX -paddingmid,paddingside};
             radarP[0] = 335;
+
+
             normalScan();
             return locations;
         }
         else if(sentryQuadX == -1 && sentryQuadY == 1){
             this.out.println("TOP LEFT");
             double[] locations = {paddingside,tempy,midX - paddingmid, tempy,paddingside,midY + paddingmid};
+
+
             radarP[0] = 65;
             normalScan();
             return locations;
@@ -74,6 +76,7 @@ public class TimmyAtUL extends Robot {
             this.out.println("BOTTOM RIGHT");
             double[] locations = {tempx,paddingside,midX + paddingmid, paddingside,tempx,midY - paddingmid};
             radarP[0] = 245;
+
             normalScan();
             return locations;
         }
@@ -81,6 +84,7 @@ public class TimmyAtUL extends Robot {
             this.out.println("TOP RIGHT");
             double[] locations = {tempx, tempy, tempx ,midY + paddingmid ,midX + paddingmid, tempy};
             radarP[0] = 155;
+
             normalScan();
             return locations;
         }
@@ -97,8 +101,64 @@ public class TimmyAtUL extends Robot {
         move(getPositions(30, 100));
     }
 
-    public void predictEnemy(double distance, double enemyHeading, double enemyVelocity){
-        this.out.println("Heading " + enemyHeading + " Velocity " + enemyVelocity);
+    public void predictEnemy(double distance, double enemyHeading, double enemyVelocity, double energy){
+        double[] predictedPosition = new double[]{1,1};
+        enemyVelocity *=8;
+        this.out.println("Velocity " + enemyVelocity);
+        if(enemyVelocity <= 2 && energy != 0){
+            enemyVelocity += 50;
+        }
+        double xVelocity, yVelocity, newBearing;
+        if(enemyHeading > 270){
+            enemyHeading -= 270;
+            xVelocity = Math.cos(enemyHeading)*enemyVelocity;
+            predictedPosition[0] = EnemyPos[0] - xVelocity;
+            yVelocity = Math.sin(enemyHeading)*enemyVelocity;
+            predictedPosition[1] = yVelocity + EnemyPos[1];
+        }
+        else if(enemyHeading > 180){
+            enemyHeading -= 180;
+            xVelocity = Math.sin(enemyHeading)*enemyVelocity;
+            predictedPosition[0] = EnemyPos[0] - xVelocity;
+            yVelocity = Math.cos(enemyHeading)*enemyVelocity;
+            predictedPosition[1] = EnemyPos[1] - yVelocity;
+        }
+        else if(enemyHeading > 90){
+            enemyHeading -= 90;
+
+            xVelocity = Math.cos(enemyHeading)*enemyVelocity;
+            predictedPosition[0] = xVelocity + EnemyPos[0];
+            yVelocity = Math.sin(enemyHeading)*enemyVelocity;
+            predictedPosition[1] = EnemyPos[1] - yVelocity;
+        }
+        else {
+            xVelocity = Math.sin(enemyHeading)*enemyVelocity;
+            predictedPosition[0] = xVelocity + EnemyPos[0];
+            yVelocity = Math.cos(enemyHeading)*enemyVelocity;
+            predictedPosition[1] = EnemyPos[1] + yVelocity;
+        }
+        newBearing = Math.atan((Math.abs(predictedPosition[0] - getX()))/Math.abs((predictedPosition[1] -  getY())))* 57.2958;
+        if(predictedPosition[0] > getX()){
+            if(predictedPosition[1] < getY()){
+                //bottom tight
+                newBearing = 180 - newBearing;
+            }
+            //top Right
+        }
+        else{
+            //top left
+            if(predictedPosition[1] > getY()){
+                newBearing = 360 - newBearing;
+            }
+            else {
+                newBearing += 180;
+            }
+        }
+        this.out.println("Old Postion" + EnemyPos[0] + " Y: " + EnemyPos[1]);
+        this.out.println("Predicted Postion: " + predictedPosition[0] + " " + predictedPosition[1] + "\nBearing: " + newBearing);
+        shootGun(newBearing, distance);
+
+
     }
 
     boolean scan = false;
@@ -118,6 +178,7 @@ public class TimmyAtUL extends Robot {
     }
 
     public void normalScan(){
+        dance();
         double radarD = getRadarHeading();
         int radarH = (int) Math.round(radarD);
         if(!hasAdjusted) {
@@ -201,10 +262,10 @@ public class TimmyAtUL extends Robot {
             double velocity = event.getVelocity();
             double heading = event.getHeading();
             double distance = event.getDistance();
-            System.out.println("Enemy Scanned");
-            EnemyPos = GetXY(targetBearing, getHeading(), event.getDistance());
-            this.out.println("Enemy bearing" + event.getBearing() + "Velocity" + event.getVelocity());
-            predictEnemy(distance, heading, velocity);
+            EnemyPos = GetXY(targetBearing, getHeading(), distance);
+            this.out.println("Enemy BEaring" + event.getBearing());
+            predictEnemy(distance, heading, velocity, event.getEnergy());
+//            shootGun(event.getBearing(), event.getDistance());
         }
         else if(!enemyScanned){
             double[] enemyPos = GetXY(event.getBearing(), getHeading(), event.getDistance());
@@ -248,10 +309,11 @@ public class TimmyAtUL extends Robot {
     }
 
     public void shootGun(double bearing, double distance){
-        double gunHeading = getGunHeading();
-        double heading = getHeading();
-        double absoluteBearing = heading + bearing;
-        double bearingFromGun = Utils.normalRelativeAngleDegrees(absoluteBearing - gunHeading);
+//        double gunHeading = getGunHeading();
+//        double heading = getHeading();
+//        double absoluteBearing = heading + bearing;
+//        double bearingFromGun = Utils.normalRelativeAngleDegrees(absoluteBearing - gunHeading);
+        double bearingFromGun = bearing - getGunHeading();
         turnGunRight(bearingFromGun);
         smartFire(distance);
     }
