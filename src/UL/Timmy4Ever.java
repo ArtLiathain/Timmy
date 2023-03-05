@@ -16,6 +16,7 @@ public class Timmy4Ever extends Robot {
         findSentry(45);
         double[] safePoint = getSafePoint();
         System.out.println("Should move forwards? " + isAhead(safePoint[0], safePoint[1]));
+        goTo(safePoint[0], safePoint[1]);
     }
 
     @Override
@@ -26,8 +27,6 @@ public class Timmy4Ever extends Robot {
             // Sentry bot never moves, therefore this only needs to be executed once
             sentryScanned = true;
             sentryQuad = findQuadrant(botXY[0], botXY[1]);
-            System.out.println("Sentry x: " + botXY[0] + " y: " + botXY[1]);
-            goTo(botXY[0], botXY[1]);
         } else {
 
         }
@@ -51,6 +50,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Evaluates the size of the sides of a triangle drawn between <b>a given point on the map</b>,
      * <b>the robots position</b> and, <b>the point on the wall</b> the robot is looking at.
+     *
      * @param pointX [double] X-Coordinate of given point
      * @param pointY [double] Y-Coordinate of given point
      * @return [double array] Squares of side lengths
@@ -86,9 +86,21 @@ public class Timmy4Ever extends Robot {
                 rightWall = (myHeading < 45 || myHeading > 315),
                 leftWall = (myHeading < 225 || myHeading > 135);
 
-        // Determines which wall Timmy is looking at, and sets the wall's X/Y coordinate accordingly (-1 if robot is facing neither)
-        wallXY[0] = rightWall ? getBattleFieldWidth() : leftWall ? 0 : -1;
-        wallXY[1] = topWall ? getBattleFieldHeight() : bottomWall ? 0 : -1;
+        // Determines which wall Timmy is looking at, and sets the wall's X/Y coordinate accordingly (Remains -1 if unchanged)
+        switch (getWall()) {
+            case 0:
+                wallXY[1] = getBattleFieldHeight();
+                break;
+            case 1:
+                wallXY[0] = getBattleFieldWidth();
+                break;
+            case 2:
+                wallXY[1] = 0;
+                break;
+            case 3:
+                wallXY[0] = 0;
+                break;
+        }
 
         // Equation of the line from robot's heading
         double myHeadingRadians = Math.toRadians(myHeading);
@@ -102,6 +114,24 @@ public class Timmy4Ever extends Robot {
         }
         System.out.println("Looking at point (x: " + wallXY[0] + " y: " + wallXY[1] + ") on wall");
         return wallXY;
+    }
+
+    /**
+     * Evaluates which wall the robot is looking at
+     *
+     * @return [int]
+     * <br>0: Top Wall
+     * <br>1: Right Wall
+     * <br>2: Bottom Wall
+     * <br>3: Left Wall
+     */
+    private int getWall() {
+        double myHeading = getStandardHeading();
+        boolean topWall = (myHeading > 45 && myHeading < 135),
+                bottomWall = (myHeading > 225 && myHeading < 315),
+                rightWall = (myHeading < 45 || myHeading > 315);
+
+        return topWall ? 0 : rightWall ? 1 : bottomWall ? 2 : 3;
     }
 
     /**
@@ -129,10 +159,16 @@ public class Timmy4Ever extends Robot {
 
     private void goTo(double destX, double destY) {
         double myHeading = getStandardHeading(), angle = 0;
-        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, wallXY = getWallPoint(), sides = getTriangleSides(destX, destY);
+        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, sides = getTriangleSides(destX, destY);
 
         double angleRadians = Math.acos((sides[0] + sides[1] - sides[2]) / (2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1])));
-        System.out.println("Angle between Sentry, Timmy, and the Wall point: " + Math.toDegrees(angleRadians));
+        angle = Math.toDegrees(angleRadians);
+
+        System.out.println("Angle to safe point: " + angle);
+        System.out.println("Proposed turning angle: " + (180 - angle));
+        turnRight(180 - angle);
+        double distance = Math.sqrt(Math.pow(myXY[0] - destXY[0], 2) + Math.pow(myXY[1] - destXY[1], 2));
+        back(distance);
     }
 
     /**
