@@ -197,7 +197,8 @@ public class TimmyAtUL extends Robot {
     // yoinked from https://robowiki.net/wiki/GoTo and modified for Robot
     //further yoinked modified version from ULCoffee
 
-    private void goTo(double x, double y) {
+    private void goTo(double x, double y)
+    {
         double x_dest = x - getX();
         double y_dest = y - getY();
         out.println("going to" + x + " y:" + y);

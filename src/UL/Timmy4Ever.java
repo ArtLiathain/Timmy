@@ -41,16 +41,31 @@ public class Timmy4Ever extends Robot {
      * <br>False - The point is behind the robot
      */
     private boolean isAhead(double pointX, double pointY) {
-        double[] pointXY = {pointX, pointY}, wallXY = getWallPoint(), myXY = {getX(), getY()};
-        double aSquared = 0, bSquared = 0, cSquared = 0;
+        double[] sides = getTriangleSides(pointX, pointY);
+
+        return (sides[2] <= sides[0] + sides[1]);
+    }
+
+    /**
+     * Evaluates the size of the sides of a triangle drawn between <b>a given point on the map</b>,
+     * <b>the robots position</b> and, <b>the point on the wall</b> the robot is looking at.
+     * @param pointX [double] X-Coordinate of given point
+     * @param pointY [double] Y-Coordinate of given point
+     * @return [double array] Squares of side lengths
+     * <br>Index 0: Bot - Wall
+     * <br>Index 1: Bot - Point
+     * <br>Index 2: Point - Wall
+     */
+    private double[] getTriangleSides(double pointX, double pointY) {
+        double[] pointXY = {pointX, pointY}, wallXY = getWallPoint(), myXY = {getX(), getY()}, sidesSquared = new double[3];
 
         for (int i = 0; i < 2; i++) {
-            aSquared += Math.pow((myXY[i] - wallXY[i]), 2);
-            bSquared += Math.pow((myXY[i] - pointXY[i]), 2);
-            cSquared += Math.pow((pointXY[i] - wallXY[i]), 2);
+            sidesSquared[0] += Math.pow((myXY[i] - wallXY[i]), 2);
+            sidesSquared[1] += Math.pow((myXY[i] - pointXY[i]), 2);
+            sidesSquared[2] += Math.pow((pointXY[i] - wallXY[i]), 2);
         }
 
-        return (cSquared <= aSquared + bSquared);
+        return sidesSquared;
     }
 
     /**
@@ -112,9 +127,15 @@ public class Timmy4Ever extends Robot {
 
     private void goTo(double destX, double destY) {
         double myHeading = getStandardHeading();
-        double[] myPos = {getX(), getY()};
+        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, wallXY = getWallPoint();
         boolean forwards = isAhead(destX, destY);
+        double aSquared = 0, bSquared = 0, cSquared = 0;
 
+        for (int i = 0; i < 2; i++) {
+            aSquared += Math.pow((myXY[i] - wallXY[i]), 2);
+            bSquared += Math.pow((myXY[i] - destXY[i]), 2);
+            cSquared += Math.pow((destXY[i] - wallXY[i]), 2);
+        }
 
     }
 
