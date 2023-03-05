@@ -53,30 +53,32 @@ public class Timmy4Ever extends Robot {
             cSquared += Math.pow((pointXY[i] - wallXY[i]), 2);
         }
 
-        return (cSquared < aSquared + bSquared);
+        return (cSquared <= aSquared + bSquared);
     }
 
+    /**
+     * Evaluates what point od the walls the robot is looking at
+     *
+     * @return Double array with following indices: <br>
+     * Index 0: X-Coordinate<br>
+     * Index 1: Y-Coordinate
+     */
     private double[] getWallPoint() {
         double myHeading = getStandardHeading();
-        double myX = getX();
-        double myY = getY();
-        double[] wallXY = {-1, -1};
+        double[] wallXY = new double[2], myXY = {getX(), getY()};
 
-        // Determines which wall Timmy is looking at, and sets the wall's X/Y coordinate accordingly
-        if (myHeading > 45 && myHeading < 135) { // Top wall
-            wallXY[1] = getBattleFieldHeight();
-        } else if (myHeading > 225 && myHeading < 315) { // Bottom wall
-            wallXY[1] = 0;
-        } else if (myHeading < 45 || myHeading > 315) { // Right wall
-            wallXY[0] = getBattleFieldWidth();
-        } else { // Left wall
-            wallXY[0] = 0;
-        }
+        boolean topWall = (myHeading > 45 && myHeading < 135),
+                bottomWall = (myHeading > 225 && myHeading < 315),
+                rightWall = (myHeading < 45 || myHeading > 315),
+                leftWall = (myHeading < 225 || myHeading > 135);
 
-        // Equation of the line from Timmy's heading
+        // Determines which wall Timmy is looking at, and sets the wall's X/Y coordinate accordingly (-1 if robot is facing neither)
+        wallXY[0] = rightWall ? getBattleFieldWidth() : leftWall ? 0 : -1;
+        wallXY[1] = topWall ? getBattleFieldHeight() : bottomWall ? 0 : -1;
+
+        // Equation of the line from robot's heading
         double myHeadingRadians = Math.toRadians(myHeading);
-        double m = Math.tan(myHeadingRadians);
-        double c = myY - (m * myX);
+        double m = Math.tan(myHeadingRadians), c = myXY[1] - (m * myXY[0]);
 
         // Finds corresponding X/Y coordinate using equation of line
         if (wallXY[1] == -1) {
@@ -103,14 +105,17 @@ public class Timmy4Ever extends Robot {
     }
 
     private void goTo(double destX, double destY) {
-        double myHeading = getHeading();
+        double myHeading = getStandardHeading();
         double[] myPos = {getX(), getY()};
+        boolean forwards = isAhead(destX, destY);
+
+
     }
 
     /**
      * Finds destination point for Timmy, depending on the position of Sentry Bot
      *
-     * @return Double Array, in following format:
+     * @return Double Array, with following indices:
      * <br>
      * Index 0: X-Coordinate<br>
      * Index 1: Y-Coordinate
@@ -164,9 +169,9 @@ public class Timmy4Ever extends Robot {
     private int findQuadrant(double posX, double posY) {
         double midX = getBattleFieldWidth() / 2;
         double midY = getBattleFieldHeight() / 2;
-        boolean topLeft = (posX <= midX && posY >= midY);
-        boolean topRight = (posX >= midX && posY >= midY);
-        boolean bottomLeft = (posX <= midX && posY <= midY);
+        boolean topLeft = (posX <= midX && posY >= midY),
+                topRight = (posX >= midX && posY >= midY),
+                bottomLeft = (posX <= midX && posY <= midY);
 
         return topRight ? 0 :
                 topLeft ? 1 :
