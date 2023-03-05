@@ -27,7 +27,7 @@ public class TimmyAtUL extends Robot {
     double[] EnemyPos = new double[2];
 
     double scannerRotation[] = new double[2];
-    public void move(double[] locations){
+    public void move(double[] locations){ // No need
     while(getEnergy() > 0) {
         if (xIndex < 4) {
             xIndex += 2;
@@ -45,7 +45,7 @@ public class TimmyAtUL extends Robot {
     }
     }
 
-    public double[] getPositions(double paddingside, double paddingmid){
+    public double[] getPositions(double paddingside, double paddingmid){ // No need
         double SentryBorder = getSentryBorderSize();
         double border_x = getBattleFieldWidth();
         double border_y = getBattleFieldHeight();
