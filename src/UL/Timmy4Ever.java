@@ -34,8 +34,8 @@ public class Timmy4Ever extends Robot {
     /**
      * Evaluates if a given point is ahead of the robot, or behind
      *
-     * @param pointX X-Coordinate of point
-     * @param pointY Y-Coordinate of point
+     * @param pointX [double] X-Coordinate of point
+     * @param pointY [double] Y-Coordinate of point
      * @return [boolean]
      * <br>True - The point is in front of the robot
      * <br>False - The point is behind the robot
@@ -90,8 +90,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Gets the heading of the robot using unit circle measurements
      *
-     * @return [double]
-     * <br> Angle in degrees
+     * @return [double] Angle in degrees
      */
     private double getStandardHeading() {
         return getStandardHeading(getHeading());
@@ -100,9 +99,8 @@ public class Timmy4Ever extends Robot {
     /**
      * Converts angle from compass measurements to unit circle
      *
-     * @param heading [double] angle in degrees
-     * @return [double]
-     * <br> Angle in degrees
+     * @param heading [double] Angle in degrees
+     * @return [double] Angle in degrees
      */
     private double getStandardHeading(double heading) {
         if (heading < 90) {
@@ -158,7 +156,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Rotates radar until Sentry bot is found
      *
-     * @param angleOfRotation Magnitude of change in angle, in degrees
+     * @param angleOfRotation [double] Magnitude of change in angle, in degrees
      */
     private void findSentry(double angleOfRotation) {
         while (sentryQuad == -1) {
@@ -169,8 +167,8 @@ public class Timmy4Ever extends Robot {
     /**
      * Using unit circle measurements, evaluates which quadrant a point is in.
      *
-     * @param posX Double, Point's X coordinate
-     * @param posY Double, Point's Y coordinate
+     * @param posX [double] Point's X coordinate
+     * @param posY [double] Point's Y coordinate
      * @return [int]
      * <br>Top Right: 0
      * <br>Top Left: 1
