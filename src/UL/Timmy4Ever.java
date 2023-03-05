@@ -36,9 +36,9 @@ public class Timmy4Ever extends Robot {
      *
      * @param pointX X-Coordinate of point
      * @param pointY Y-Coordinate of point
-     * @return Boolean <br>
-     * True - The point is in front of the robot<br>
-     * False - The point is behind the robot
+     * @return [boolean]
+     * <br>True - The point is in front of the robot
+     * <br>False - The point is behind the robot
      */
     private boolean isAhead(double pointX, double pointY) {
         double[] pointXY = {pointX, pointY}, wallXY = getWallPoint(), myXY = {getX(), getY()};
@@ -54,11 +54,11 @@ public class Timmy4Ever extends Robot {
     }
 
     /**
-     * Evaluates what point od the walls the robot is looking at
+     * Evaluates what point on the border the robot is looking at
      *
-     * @return Double array with following indices: <br>
-     * Index 0: X-Coordinate<br>
-     * Index 1: Y-Coordinate
+     * @return [double array]
+     * <br>Index 0: X-Coordinate
+     * <br>Index 1: Y-Coordinate
      */
     private double[] getWallPoint() {
         double myHeading = getStandardHeading();
@@ -90,15 +90,19 @@ public class Timmy4Ever extends Robot {
     /**
      * Gets the heading of the robot using unit circle measurements
      *
-     * @return The heading of the robot in degrees
+     * @return [double]
+     * <br> Angle in degrees
      */
     private double getStandardHeading() {
         return getStandardHeading(getHeading());
     }
 
-    /** Converts angle from compass measurements to unit circle
-     * @param heading Angle, in degrees
-     * @return Angle, in degrees
+    /**
+     * Converts angle from compass measurements to unit circle
+     *
+     * @param heading [double] angle in degrees
+     * @return [double]
+     * <br> Angle in degrees
      */
     private double getStandardHeading(double heading) {
         if (heading < 90) {
@@ -117,10 +121,9 @@ public class Timmy4Ever extends Robot {
     }
 
     /**
-     * Finds destination point for Timmy, depending on the position of Sentry Bot
+     * Finds the coordinates of the opposite corner to Sentry Bot
      *
-     * @return Double Array, with following indices:
-     * <br>
+     * @return [double array] <br>
      * Index 0: X-Coordinate<br>
      * Index 1: Y-Coordinate
      */
@@ -155,7 +158,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Rotates radar until Sentry bot is found
      *
-     * @param angleOfRotation Magnitude of change in angle - in degrees
+     * @param angleOfRotation Magnitude of change in angle, in degrees
      */
     private void findSentry(double angleOfRotation) {
         while (sentryQuad == -1) {
@@ -166,9 +169,13 @@ public class Timmy4Ever extends Robot {
     /**
      * Using unit circle measurements, evaluates which quadrant a point is in.
      *
-     * @param posX Point's X coordinate
-     * @param posY Point's Y coordinate
-     * @return Top Right: 0<br/>Top Left: 1<br/>Bottom Left: 2<br/>Bottom Right: 3
+     * @param posX Double, Point's X coordinate
+     * @param posY Double, Point's Y coordinate
+     * @return [int]
+     * <br>Top Right: 0
+     * <br>Top Left: 1
+     * <br>Bottom Left: 2
+     * <br>Bottom Right: 3
      */
     private int findQuadrant(double posX, double posY) {
         double midX = getBattleFieldWidth() / 2;
