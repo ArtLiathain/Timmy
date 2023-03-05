@@ -15,7 +15,7 @@ public class Timmy4Ever extends Robot {
         // Main method
         findSentry(45);
         double[] safePoint = getSafePoint();
-        System.out.println("Should move forwards? (Not reverse): " + isAhead(safePoint[0], safePoint[1]));
+        System.out.println("Should move forwards? " + isAhead(safePoint[0], safePoint[1]));
     }
 
     @Override
@@ -26,6 +26,8 @@ public class Timmy4Ever extends Robot {
             // Sentry bot never moves, therefore this only needs to be executed once
             sentryScanned = true;
             sentryQuad = findQuadrant(botXY[0], botXY[1]);
+            System.out.println("Sentry x: " + botXY[0] + " y: " + botXY[1]);
+            goTo(botXY[0], botXY[1]);
         } else {
 
         }
@@ -126,17 +128,11 @@ public class Timmy4Ever extends Robot {
     }
 
     private void goTo(double destX, double destY) {
-        double myHeading = getStandardHeading();
-        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, wallXY = getWallPoint();
-        boolean forwards = isAhead(destX, destY);
-        double aSquared = 0, bSquared = 0, cSquared = 0;
+        double myHeading = getStandardHeading(), angle = 0;
+        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, wallXY = getWallPoint(), sides = getTriangleSides(destX, destY);
 
-        for (int i = 0; i < 2; i++) {
-            aSquared += Math.pow((myXY[i] - wallXY[i]), 2);
-            bSquared += Math.pow((myXY[i] - destXY[i]), 2);
-            cSquared += Math.pow((destXY[i] - wallXY[i]), 2);
-        }
-
+        double angleRadians = Math.acos((sides[0] + sides[1] - sides[2]) / (2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1])));
+        System.out.println("Angle between Sentry, Timmy, and the Wall point: " + Math.toDegrees(angleRadians));
     }
 
     /**
