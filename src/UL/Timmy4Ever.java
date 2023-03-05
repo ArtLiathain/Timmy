@@ -26,11 +26,8 @@ public class Timmy4Ever extends Robot {
             // Sentry bot never moves, therefore this only needs to be executed once
             sentryScanned = true;
             sentryQuad = findQuadrant(botXY[0], botXY[1]);
-            System.out.println("Sentry quadrant: " + sentryQuad);
-
-            goTo(botXY[0], botXY[1]);
         } else {
-            System.out.println("Coords of bot: " + Arrays.toString(getXY(event.getBearing(), event.getDistance())));
+
         }
     }
 
@@ -96,11 +93,18 @@ public class Timmy4Ever extends Robot {
      * @return The heading of the robot in degrees
      */
     private double getStandardHeading() {
-        double myHeading = getHeading();
-        if (myHeading < 90) {
-            return 90 - myHeading;
+        return getStandardHeading(getHeading());
+    }
+
+    /** Converts angle from compass measurements to unit circle
+     * @param heading Angle, in degrees
+     * @return Angle, in degrees
+     */
+    private double getStandardHeading(double heading) {
+        if (heading < 90) {
+            return 90 - heading;
         } else {
-            return 450 - myHeading;
+            return 450 - heading;
         }
     }
 
