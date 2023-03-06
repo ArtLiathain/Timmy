@@ -4,7 +4,6 @@ import robocode.Robot;
 import robocode.ScannedRobotEvent;
 
 import java.lang.Math;
-import java.util.Arrays;
 
 public class Timmy4Ever extends Robot {
     private int sentryQuad = -1;
@@ -59,7 +58,7 @@ public class Timmy4Ever extends Robot {
      * <br>Index 2: Point - Wall
      */
     private double[] getTriangleSides(double pointX, double pointY) {
-        double[] pointXY = {pointX, pointY}, wallXY = getWallPoint(), myXY = {getX(), getY()}, sidesSquared = new double[3];
+        double[] pointXY = {pointX, pointY}, wallXY = getViewedWallPoint(), myXY = {getX(), getY()}, sidesSquared = new double[3];
 
         for (int i = 0; i < 2; i++) {
             sidesSquared[0] += Math.pow((myXY[i] - wallXY[i]), 2);
@@ -77,7 +76,7 @@ public class Timmy4Ever extends Robot {
      * <br>Index 0: X-Coordinate
      * <br>Index 1: Y-Coordinate
      */
-    private double[] getWallPoint() {
+    private double[] getViewedWallPoint() {
         double myHeading = getStandardHeading();
         double[] wallXY = new double[2], myXY = {getX(), getY()};
 
@@ -86,8 +85,8 @@ public class Timmy4Ever extends Robot {
                 rightWall = (myHeading < 45 || myHeading > 315),
                 leftWall = (myHeading < 225 || myHeading > 135);
 
-        // Determines which wall Timmy is looking at, and sets the wall's X/Y coordinate accordingly (Remains -1 if unchanged)
-        switch (getWall()) {
+        // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
+        switch (getViewedWall()) {
             case 0:
                 wallXY[1] = getBattleFieldHeight();
                 break;
@@ -121,17 +120,18 @@ public class Timmy4Ever extends Robot {
      *
      * @return [int]
      * <br>0: Top Wall
-     * <br>1: Right Wall
+     * <br>1: Left Wall
      * <br>2: Bottom Wall
-     * <br>3: Left Wall
+     * <br>3: Right Wall
      */
-    private int getWall() {
+    private int getViewedWall() {
         double myHeading = getStandardHeading();
+        double[] myXY = {getX(), getY()};
         boolean topWall = (myHeading > 45 && myHeading < 135),
-                bottomWall = (myHeading > 225 && myHeading < 315),
-                rightWall = (myHeading < 45 || myHeading > 315);
+                leftWall = (myHeading < 225 || myHeading > 135),
+                bottomWall = (myHeading > 225 && myHeading < 315);
 
-        return topWall ? 0 : rightWall ? 1 : bottomWall ? 2 : 3;
+        return topWall ? 0 : leftWall ? 1 : bottomWall ? 2 : 3;
     }
 
     /**
