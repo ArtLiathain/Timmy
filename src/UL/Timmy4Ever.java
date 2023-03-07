@@ -66,13 +66,16 @@ public class Timmy4Ever extends Robot {
      *
      * @param pointX [double] X-Coordinate of given point
      * @param pointY [double] Y-Coordinate of given point
-     * @return [double array] Squares of side lengths
+     * @return [double array] <b>Squares</b> of side lengths
      * <br>Index 0: Bot - Wall
      * <br>Index 1: Bot - Point
      * <br>Index 2: Point - Wall
      */
     private double[] getTriangleSides(double pointX, double pointY) {
-        double[] pointXY = {pointX, pointY}, wallXY = getViewedWallPoint(), myXY = {getX(), getY()}, sidesSquared = new double[3];
+        double[] pointXY = {pointX, pointY},
+                wallXY = getViewedWallPoint(),
+                myXY = {getX(), getY()},
+                sidesSquared = new double[3];
 
         for (int i = 0; i < 2; i++) {
             sidesSquared[0] += Math.pow((myXY[i] - wallXY[i]), 2);
@@ -173,17 +176,29 @@ public class Timmy4Ever extends Robot {
     }
 
     private void goTo(double destX, double destY) {
-        double myHeading = getStandardHeading(), angle = 0;
         double[] myXY = {getX(), getY()}, destXY = {destX, destY}, sides = getTriangleSides(destX, destY);
 
         double angleRadians = Math.acos((sides[0] + sides[1] - sides[2]) / (2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1])));
-        angle = Math.toDegrees(angleRadians);
-
-        System.out.println("Angle to safe point: " + angle);
-        System.out.println("Proposed turning angle: " + (180 - angle));
-        turnRight(180 - angle);
+        double angle = getTurnAngle(destX, destY);
         double distance = Math.sqrt(Math.pow(myXY[0] - destXY[0], 2) + Math.pow(myXY[1] - destXY[1], 2));
-        back(distance);
+    }
+
+    /**
+     * Returns the angle the robot must turn to face a given destination point
+     *
+     * @param destX [double] X-Coordinate of given point
+     * @param destY [double] Y-Coordinate of given point
+     * @return [double] Angle between
+     */
+    private double getTurnAngle(double destX, double destY) {
+        double angleDegrees, numerator, denominator;
+        double[] sides = getTriangleSides(destX, destY);
+
+        numerator = sides[0] + sides[1] - sides[2];
+        denominator = 2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1]);
+        angleDegrees = Math.toDegrees(Math.acos(numerator / denominator));
+
+        return angleDegrees;
     }
 
     /**
@@ -226,7 +241,7 @@ public class Timmy4Ever extends Robot {
      * @param angleOfRotation [double] Magnitude of change in angle, in degrees
      */
     private void findSentry(double angleOfRotation) {
-        while (sentryQuad != null) {
+        while (sentryQuad == null) {
             turnRadarRight(angleOfRotation);
         }
     }
