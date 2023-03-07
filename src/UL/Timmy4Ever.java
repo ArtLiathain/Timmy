@@ -9,6 +9,20 @@ public class Timmy4Ever extends Robot {
     private int sentryQuad = -1;
     private final double padding = 30;
 
+    enum Corner {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    }
+
+    enum Wall {
+        TOP,
+        LEFT,
+        BOTTOM,
+        RIGHT
+    }
+
     @Override
     public void run() {
         // Main method
@@ -16,6 +30,7 @@ public class Timmy4Ever extends Robot {
         double[] safePoint = getSafePoint();
         System.out.println("Should move forwards? " + isAhead(safePoint[0], safePoint[1]));
         goTo(safePoint[0], safePoint[1]);
+        getViewedWallPoint();
     }
 
     @Override
@@ -87,16 +102,16 @@ public class Timmy4Ever extends Robot {
 
         // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
         switch (getViewedWall()) {
-            case 0:
+            case TOP:
                 wallXY[1] = getBattleFieldHeight();
                 break;
-            case 1:
+            case RIGHT:
                 wallXY[0] = getBattleFieldWidth();
                 break;
-            case 2:
+            case BOTTOM:
                 wallXY[1] = 0;
                 break;
-            case 3:
+            case LEFT:
                 wallXY[0] = 0;
                 break;
         }
@@ -111,27 +126,33 @@ public class Timmy4Ever extends Robot {
         } else {
             wallXY[0] = (wallXY[1] - c) / m;
         }
-        System.out.println("Looking at point (x: " + wallXY[0] + " y: " + wallXY[1] + ") on wall");
+
         return wallXY;
     }
 
     /**
      * Evaluates which wall the robot is looking at
      *
-     * @return [int]
-     * <br>0: Top Wall
-     * <br>1: Left Wall
-     * <br>2: Bottom Wall
-     * <br>3: Right Wall
+     * @return [enum Wall]
      */
-    private int getViewedWall() {
+    private Wall getViewedWall() {
         double myHeading = getStandardHeading();
-        double[] myXY = {getX(), getY()};
-        boolean topWall = (myHeading > 45 && myHeading < 135),
-                leftWall = (myHeading < 225 || myHeading > 135),
-                bottomWall = (myHeading > 225 && myHeading < 315);
+        double[] myXY = {getX(), getY()},
+                cornerTopRight = {getBattleFieldWidth(), getBattleFieldHeight()},
+                cornerBottomRight = {getBattleFieldWidth(), 0},
+                cornerBottomLeft = {0, 0},
+                cornerTopLeft = {0, getBattleFieldHeight()};
 
-        return topWall ? 0 : leftWall ? 1 : bottomWall ? 2 : 3;
+        double headingTopRight = Math.toDegrees(Math.atan((cornerTopRight[1] - myXY[1]) / (cornerTopRight[0] - myXY[0]))),
+                headingBottomRight = 360 + Math.toDegrees(Math.atan((cornerBottomRight[1] - myXY[1]) / (cornerBottomRight[0] - myXY[0]))),
+                headingBottomLeft = 270 - Math.toDegrees(Math.atan((cornerBottomLeft[1] - myXY[1]) / (cornerBottomLeft[0] - myXY[0]))),
+                headingTopLeft = 180 + Math.toDegrees(Math.atan((cornerTopLeft[1] - myXY[1]) / (cornerTopLeft[0] - myXY[0])));
+
+        boolean topWall = (myHeading > headingTopRight && myHeading < headingTopLeft),
+                leftWall = (myHeading > headingTopLeft && myHeading < headingBottomLeft),
+                bottomWall = (myHeading > headingBottomLeft && myHeading < headingBottomRight);
+
+        return topWall ? Wall.TOP : leftWall ? Wall.LEFT : bottomWall ? Wall.BOTTOM : Wall.RIGHT;
     }
 
     /**
