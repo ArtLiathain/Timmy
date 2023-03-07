@@ -6,10 +6,9 @@ import robocode.ScannedRobotEvent;
 import java.lang.Math;
 
 public class Timmy4Ever extends Robot {
-    private int sentryQuad = -1;
-    private final double padding = 30;
+    private Quad sentryQuad;
 
-    enum Corner {
+    enum Quad {
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
@@ -94,11 +93,6 @@ public class Timmy4Ever extends Robot {
     private double[] getViewedWallPoint() {
         double myHeading = getStandardHeading();
         double[] wallXY = new double[2], myXY = {getX(), getY()};
-
-        boolean topWall = (myHeading > 45 && myHeading < 135),
-                bottomWall = (myHeading > 225 && myHeading < 315),
-                rightWall = (myHeading < 45 || myHeading > 315),
-                leftWall = (myHeading < 225 || myHeading > 135);
 
         // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
         switch (getViewedWall()) {
@@ -201,26 +195,25 @@ public class Timmy4Ever extends Robot {
      */
     private double[] getSafePoint() {
         double[] safeXY = new double[2];
-        double left = padding;
+        double padding = 30;
         double right = getBattleFieldWidth() - padding;
         double top = getBattleFieldHeight() - padding;
-        double bottom = padding;
 
         switch (sentryQuad) {
-            case 0: // Sentry is Top Right
-                safeXY[0] = left;
-                safeXY[1] = bottom;
+            case TOP_RIGHT:
+                safeXY[0] = padding;
+                safeXY[1] = padding;
                 break;
-            case 1: // Sentry is Top Left
+            case TOP_LEFT:
                 safeXY[0] = right;
-                safeXY[1] = bottom;
+                safeXY[1] = padding;
                 break;
-            case 2: // Sentry is Bottom Left
+            case BOTTOM_LEFT:
                 safeXY[0] = right;
                 safeXY[1] = top;
                 break;
-            case 3: // Sentry is Bottom Right
-                safeXY[0] = left;
+            case BOTTOM_RIGHT:
+                safeXY[0] = padding;
                 safeXY[1] = top;
                 break;
         }
@@ -233,7 +226,7 @@ public class Timmy4Ever extends Robot {
      * @param angleOfRotation [double] Magnitude of change in angle, in degrees
      */
     private void findSentry(double angleOfRotation) {
-        while (sentryQuad == -1) {
+        while (sentryQuad != null) {
             turnRadarRight(angleOfRotation);
         }
     }
@@ -243,22 +236,18 @@ public class Timmy4Ever extends Robot {
      *
      * @param posX [double] Point's X coordinate
      * @param posY [double] Point's Y coordinate
-     * @return [int]
-     * <br>Top Right: 0
-     * <br>Top Left: 1
-     * <br>Bottom Left: 2
-     * <br>Bottom Right: 3
+     * @return [enum Quad]
      */
-    private int findQuadrant(double posX, double posY) {
+    private Quad findQuadrant(double posX, double posY) {
         double midX = getBattleFieldWidth() / 2;
         double midY = getBattleFieldHeight() / 2;
         boolean topLeft = (posX <= midX && posY >= midY),
                 topRight = (posX >= midX && posY >= midY),
                 bottomLeft = (posX <= midX && posY <= midY);
 
-        return topRight ? 0 :
-                topLeft ? 1 :
-                        bottomLeft ? 2 : 3;
+        return topRight ? Quad.TOP_RIGHT :
+                topLeft ? Quad.TOP_LEFT :
+                        bottomLeft ? Quad.BOTTOM_LEFT : Quad.BOTTOM_RIGHT;
     }
 
     private double[] getXY(double bearing, double distance) {
