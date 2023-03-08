@@ -176,11 +176,14 @@ public class Timmy4Ever extends Robot {
     }
 
     private void goTo(double destX, double destY) {
-        double[] myXY = {getX(), getY()}, destXY = {destX, destY}, sides = getTriangleSides(destX, destY);
+        double angle = getTurnAngle(destX, destY), distance;
+        double[] myXY = {getX(), getY()}, destXY = {destX, destY};
 
-        double angleRadians = Math.acos((sides[0] + sides[1] - sides[2]) / (2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1])));
-        double angle = getTurnAngle(destX, destY);
-        double distance = Math.sqrt(Math.pow(myXY[0] - destXY[0], 2) + Math.pow(myXY[1] - destXY[1], 2));
+        distance = Math.sqrt(Math.pow(myXY[0] - destXY[0], 2) + Math.pow(myXY[1] - destXY[1], 2));
+
+        if (angle > 90) {
+            angle = 180 - angle;
+        }
     }
 
     /**
@@ -188,7 +191,7 @@ public class Timmy4Ever extends Robot {
      *
      * @param destX [double] X-Coordinate of given point
      * @param destY [double] Y-Coordinate of given point
-     * @return [double] Angle between
+     * @return [double] Angle, in degrees
      */
     private double getTurnAngle(double destX, double destY) {
         double angleDegrees, numerator, denominator;
@@ -260,9 +263,15 @@ public class Timmy4Ever extends Robot {
                 topRight = (posX >= midX && posY >= midY),
                 bottomLeft = (posX <= midX && posY <= midY);
 
-        return topRight ? Quad.TOP_RIGHT :
-                topLeft ? Quad.TOP_LEFT :
-                        bottomLeft ? Quad.BOTTOM_LEFT : Quad.BOTTOM_RIGHT;
+        if (topLeft) {
+            return Quad.TOP_LEFT;
+        } else if (topRight) {
+            return Quad.TOP_RIGHT;
+        } else if (bottomLeft) {
+            return Quad.BOTTOM_LEFT;
+        } else {
+            return Quad.BOTTOM_RIGHT;
+        }
     }
 
     private double[] getXY(double bearing, double distance) {
