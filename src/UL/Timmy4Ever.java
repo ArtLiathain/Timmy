@@ -81,11 +81,11 @@ public class Timmy4Ever extends Robot {
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         boolean sentryScanned = false;
-        double[] botXY = getXY(event.getBearing(), event.getDistance());
+        Point bot = getXY(event.getBearing(), event.getDistance());
         if (!sentryScanned && event.isSentryRobot()) {
             // Sentry bot never moves, therefore this only needs to be executed once
             sentryScanned = true;
-            sentryQuad = findQuadrant(botXY[0], botXY[1]);
+            sentryQuad = findQuadrant(bot);
         } else {
 
         }
