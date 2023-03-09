@@ -7,6 +7,8 @@ import java.lang.Math;
 
 public class Timmy4Ever extends Robot {
     private Quad sentryQuad;
+    private final double borderX = getBattleFieldWidth();
+    private final double borderY = getBattleFieldHeight();
 
     enum Quad {
         TOP_LEFT,
@@ -134,9 +136,9 @@ public class Timmy4Ever extends Robot {
      * <br>Index 0: X-Coordinate
      * <br>Index 1: Y-Coordinate
      */
-    private double[] getViewedWallPoint() {
+    private Point getViewedWallPoint() {
         double myHeading = getStandardHeading();
-        double[] wallXY = new double[2];
+        Point wallXY = new Point();
         Point bot = new Point(getX(), getY());
 
                 // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
