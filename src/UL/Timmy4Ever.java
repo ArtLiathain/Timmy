@@ -104,7 +104,7 @@ public class Timmy4Ever extends Robot {
         double[] sides = getTriangleSides(point);
 
         for (int i = 0; i < sides.length; i++) {
-            sides[i] =  Math.pow(sides[i], 2);
+            sides[i] = Math.pow(sides[i], 2);
         }
 
         return (sides[2] <= sides[0] + sides[1]);
@@ -136,9 +136,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Evaluates what point on the border the robot is looking at
      *
-     * @return [double array]
-     * <br>Index 0: X-Coordinate
-     * <br>Index 1: Y-Coordinate
+     * @return [Point] Point on the wall the bot is looking at
      */
     private Point getViewedWallPoint() {
         double myHeading = getStandardHeading();
@@ -298,12 +296,14 @@ public class Timmy4Ever extends Robot {
      * @param posY [double] Point's Y coordinate
      * @return [enum Quad]
      */
-    private Quad findQuadrant(double posX, double posY) {
-        double midX = getBattleFieldWidth() / 2;
-        double midY = getBattleFieldHeight() / 2;
-        boolean topLeft = (posX <= midX && posY >= midY),
-                topRight = (posX >= midX && posY >= midY),
-                bottomLeft = (posX <= midX && posY <= midY);
+    private Quad findQuadrant(Point point) {
+        double midX = getBattleFieldWidth() / 2,
+                midY = getBattleFieldHeight() / 2,
+                x = point.getX(),
+                y = point.getY();
+        boolean topLeft = (x <= midX && y >= midY),
+                topRight = (x >= midX && y >= midY),
+                bottomLeft = (x <= midX && y <= midY);
 
         if (topLeft) {
             return Quad.TOP_LEFT;
