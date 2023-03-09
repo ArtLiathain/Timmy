@@ -38,6 +38,7 @@ public class Timmy4Ever extends Robot {
 
         /**
          * Calculates the distance to a given point
+         *
          * @param destXY [Point] Given point to calculate the distance to
          * @return [double] Length of the line
          */
@@ -141,31 +142,28 @@ public class Timmy4Ever extends Robot {
         Point wallXY = new Point();
         Point bot = new Point(getX(), getY());
 
-                // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
-        switch (getViewedWall()) {
-            case TOP:
-                wallXY[1] = getBattleFieldHeight();
-                break;
-            case RIGHT:
-                wallXY[0] = getBattleFieldWidth();
-                break;
-            case BOTTOM:
-                wallXY[1] = 0;
-                break;
-            case LEFT:
-                wallXY[0] = 0;
-                break;
-        }
-
         // Equation of the line from robot's heading
         double myHeadingRadians = Math.toRadians(myHeading);
         double m = Math.tan(myHeadingRadians), c = bot.getY() - (m * bot.getX());
 
-        // Finds corresponding X/Y coordinate using equation of line
-        if (wallXY[1] == -1) {
-            wallXY[1] = (m * wallXY[0]) + c;
-        } else {
-            wallXY[0] = (wallXY[1] - c) / m;
+        // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
+        switch (getViewedWall()) {
+            case TOP:
+                wallXY.setX((borderY - c) / m);
+                wallXY.setY(borderY);
+                break;
+            case RIGHT:
+                wallXY.setX(borderX);
+                wallXY.setY((m * borderX) + c);
+                break;
+            case BOTTOM:
+                wallXY.setX(c / m);
+                wallXY.setY(0);
+                break;
+            case LEFT:
+                wallXY.setX(0);
+                wallXY.setY(c);
+                break;
         }
 
         return wallXY;
