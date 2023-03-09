@@ -114,11 +114,10 @@ public class Timmy4Ever extends Robot {
      * <br>Index 1: Bot - Point
      * <br>Index 2: Point - Wall
      */
-    private double[] getTriangleSides(double pointX, double pointY) {
+    private double[] getTriangleSides(Point point) {
         double[] sides = new double[3];
 
-        Point point = new Point(pointX, pointY),
-        Point wall = getViewedWallPoint();
+        Point wall = getViewedWallPoint(),
         Point bot = new Point(getX(), getY());
 
         sides[0] = bot.lengthTo(wall);
