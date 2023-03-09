@@ -138,9 +138,10 @@ public class Timmy4Ever extends Robot {
      */
     private double[] getViewedWallPoint() {
         double myHeading = getStandardHeading();
-        double[] wallXY = new double[2], myXY = {getX(), getY()};
+        double[] wallXY = new double[2];
+        Point bot = new Point(getX(), getY());
 
-        // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
+                // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
         switch (getViewedWall()) {
             case TOP:
                 wallXY[1] = getBattleFieldHeight();
@@ -158,7 +159,7 @@ public class Timmy4Ever extends Robot {
 
         // Equation of the line from robot's heading
         double myHeadingRadians = Math.toRadians(myHeading);
-        double m = Math.tan(myHeadingRadians), c = myXY[1] - (m * myXY[0]);
+        double m = Math.tan(myHeadingRadians), c = bot.getY() - (m * bot.getX());
 
         // Finds corresponding X/Y coordinate using equation of line
         if (wallXY[1] == -1) {
