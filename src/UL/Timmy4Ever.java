@@ -73,7 +73,7 @@ public class Timmy4Ever extends Robot {
         // Main method
         findSentry(45);
         Point safePoint = getSafePoint();
-        System.out.println("Should move forwards? " + isAhead(safePoint.getX(), safePoint.getY()));
+        System.out.println("Should move forwards? " + isAhead(safePoint));
         goTo(safePoint.getX(), safePoint.getY());
         getViewedWallPoint();
     }
@@ -100,8 +100,12 @@ public class Timmy4Ever extends Robot {
      * <br>True - The point is in front of the robot
      * <br>False - The point is behind the robot
      */
-    private boolean isAhead(double pointX, double pointY) {
-        double[] sides = getTriangleSides(pointX, pointY);
+    private boolean isAhead(Point point) {
+        double[] sides = getTriangleSides(point);
+
+        for (int i = 0; i < sides.length; i++) {
+            sides[i] =  Math.pow(sides[i], 2);
+        }
 
         return (sides[2] <= sides[0] + sides[1]);
     }
@@ -120,8 +124,7 @@ public class Timmy4Ever extends Robot {
     private double[] getTriangleSides(Point point) {
         double[] sides = new double[3];
 
-        Point wall = getViewedWallPoint(),
-        Point bot = new Point(getX(), getY());
+        Point wall = getViewedWallPoint(), bot = new Point(getX(), getY());
 
         sides[0] = bot.lengthTo(wall);
         sides[1] = bot.lengthTo(point);
