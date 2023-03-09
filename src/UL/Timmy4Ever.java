@@ -109,24 +109,23 @@ public class Timmy4Ever extends Robot {
      *
      * @param pointX [double] X-Coordinate of given point
      * @param pointY [double] Y-Coordinate of given point
-     * @return [double array] <b>Squares</b> of side lengths
+     * @return [double array] Side lengths
      * <br>Index 0: Bot - Wall
      * <br>Index 1: Bot - Point
      * <br>Index 2: Point - Wall
      */
     private double[] getTriangleSides(double pointX, double pointY) {
-        double[] pointXY = {pointX, pointY},
-                wallXY = getViewedWallPoint(),
-                myXY = {getX(), getY()},
-                sidesSquared = new double[3];
+        double[] sides = new double[3];
 
-        for (int i = 0; i < 2; i++) {
-            sidesSquared[0] += Math.pow((myXY[i] - wallXY[i]), 2);
-            sidesSquared[1] += Math.pow((myXY[i] - pointXY[i]), 2);
-            sidesSquared[2] += Math.pow((pointXY[i] - wallXY[i]), 2);
-        }
+        Point point = new Point(pointX, pointY),
+        Point wall = getViewedWallPoint();
+        Point bot = new Point(getX(), getY());
 
-        return sidesSquared;
+        sides[0] = bot.lengthTo(wall);
+        sides[1] = bot.lengthTo(point);
+        sides[2] = point.lengthTo(wall);
+
+        return sides;
     }
 
     /**
