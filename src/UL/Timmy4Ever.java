@@ -220,11 +220,11 @@ public class Timmy4Ever extends Robot {
         }
     }
 
-    private void goTo(double destX, double destY) {
-        double angle = getTurnAngle(destX, destY), distance;
-        double[] myXY = {getX(), getY()}, destXY = {destX, destY};
+    private void goTo(Point destination) {
+        double angle = getTurnAngle(destination), distance;
+        double[] myXY = {getX(), getY()};
 
-        distance = Math.sqrt(Math.pow(myXY[0] - destXY[0], 2) + Math.pow(myXY[1] - destXY[1], 2));
+        distance = Math.sqrt(Math.pow(myXY[0] - destination.getX(), 2) + Math.pow(myXY[1] - destination.getY(), 2));
 
         if (angle > 90) {
             angle = 180 - angle;
@@ -232,15 +232,14 @@ public class Timmy4Ever extends Robot {
     }
 
     /**
-     * Returns the angle the robot must turn to face a given destination point
+     * Returns the angle the robot must turn to face a given point
      *
-     * @param destX [double] X-Coordinate of given point
-     * @param destY [double] Y-Coordinate of given point
+     * @param point [Point] Destination point
      * @return [double] Angle, in degrees
      */
-    private double getTurnAngle(double destX, double destY) {
+    private double getTurnAngle(Point point) {
         double angleDegrees, numerator, denominator;
-        double[] sides = getTriangleSides(destX, destY);
+        double[] sides = getTriangleSides(point);
 
         numerator = sides[0] + sides[1] - sides[2];
         denominator = 2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1]);
