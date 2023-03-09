@@ -222,9 +222,9 @@ public class Timmy4Ever extends Robot {
 
     private void goTo(Point destination) {
         double angle = getTurnAngle(destination), distance;
-        double[] myXY = {getX(), getY()};
+        Point bot = new Point(getX(), getY());
 
-        distance = Math.sqrt(Math.pow(myXY[0] - destination.getX(), 2) + Math.pow(myXY[1] - destination.getY(), 2));
+        distance = bot.lengthTo(destination);
 
         if (angle > 90) {
             angle = 180 - angle;
