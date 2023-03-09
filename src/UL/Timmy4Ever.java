@@ -22,13 +22,56 @@ public class Timmy4Ever extends Robot {
         RIGHT
     }
 
+    private static class Point {
+        private double x;
+        private double y;
+
+        public Point(double posX, double posY) {
+            this.x = posX;
+            this.y = posY;
+        }
+
+        public Point() {
+        }
+
+        /**
+         * Calculates the distance to a given point
+         * @param destXY [Point] Given point to calculate the distance to
+         * @return [double] Length of the line
+         */
+        public double lengthTo(Point destXY) {
+            double length = 0;
+
+            length += Math.pow(this.x - destXY.getX(), 2);
+            length += Math.pow(this.y - destXY.getY(), 2);
+
+            return Math.sqrt(length);
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double posX) {
+            this.x = posX;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+    }
+
     @Override
     public void run() {
         // Main method
         findSentry(45);
-        double[] safePoint = getSafePoint();
-        System.out.println("Should move forwards? " + isAhead(safePoint[0], safePoint[1]));
-        goTo(safePoint[0], safePoint[1]);
+        Point safePoint = getSafePoint();
+        System.out.println("Should move forwards? " + isAhead(safePoint.getX(), safePoint.getY()));
+        goTo(safePoint.getX(), safePoint.getY());
         getViewedWallPoint();
     }
 
@@ -207,32 +250,30 @@ public class Timmy4Ever extends Robot {
     /**
      * Finds the coordinates of the opposite corner to Sentry Bot
      *
-     * @return [double array] <br>
-     * Index 0: X-Coordinate<br>
-     * Index 1: Y-Coordinate
+     * @return [Point]
      */
-    private double[] getSafePoint() {
-        double[] safeXY = new double[2];
+    private Point getSafePoint() {
+        Point safeXY = new Point();
         double padding = 30;
         double right = getBattleFieldWidth() - padding;
         double top = getBattleFieldHeight() - padding;
 
         switch (sentryQuad) {
             case TOP_RIGHT:
-                safeXY[0] = padding;
-                safeXY[1] = padding;
+                safeXY.setX(padding);
+                safeXY.setY(padding);
                 break;
             case TOP_LEFT:
-                safeXY[0] = right;
-                safeXY[1] = padding;
+                safeXY.setX(right);
+                safeXY.setY(padding);
                 break;
             case BOTTOM_LEFT:
-                safeXY[0] = right;
-                safeXY[1] = top;
+                safeXY.setX(right);
+                safeXY.setY(top);
                 break;
             case BOTTOM_RIGHT:
-                safeXY[0] = padding;
-                safeXY[1] = top;
+                safeXY.setX(padding);
+                safeXY.setY(top);
                 break;
         }
         return safeXY;
