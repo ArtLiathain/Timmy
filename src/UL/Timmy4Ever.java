@@ -94,8 +94,7 @@ public class Timmy4Ever extends Robot {
     /**
      * Evaluates if a given point is ahead of the robot, or behind
      *
-     * @param pointX [double] X-Coordinate of point
-     * @param pointY [double] Y-Coordinate of point
+     * @param point [Point] Point to be evaluated
      * @return [boolean]
      * <br>True - The point is in front of the robot
      * <br>False - The point is behind the robot
@@ -114,8 +113,7 @@ public class Timmy4Ever extends Robot {
      * Evaluates the size of the sides of a triangle drawn between <b>a given point on the map</b>,
      * <b>the robots position</b> and, <b>the point on the wall</b> the robot is looking at.
      *
-     * @param pointX [double] X-Coordinate of given point
-     * @param pointY [double] Y-Coordinate of given point
+     * @param point [Point] Point that makes the 3rd corner of the triangle
      * @return [double array] Side lengths
      * <br>Index 0: Bot - Wall
      * <br>Index 1: Bot - Point
