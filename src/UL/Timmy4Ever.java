@@ -74,7 +74,7 @@ public class Timmy4Ever extends Robot {
         findSentry(45);
         Point safePoint = getSafePoint();
         System.out.println("Should move forwards? " + isAhead(safePoint));
-        goTo(safePoint.getX(), safePoint.getY());
+        goTo(safePoint);
         getViewedWallPoint();
     }
 
@@ -290,10 +290,9 @@ public class Timmy4Ever extends Robot {
     }
 
     /**
-     * Using unit circle measurements, evaluates which quadrant a point is in.
+     * Evaluates which quadrant a point is in.
      *
-     * @param posX [double] Point's X coordinate
-     * @param posY [double] Point's Y coordinate
+     * @param point [Point] Point to be evaluated
      * @return [enum Quad]
      */
     private Quad findQuadrant(Point point) {
@@ -316,9 +315,10 @@ public class Timmy4Ever extends Robot {
         }
     }
 
-    private double[] getXY(double bearing, double distance) {
+    private Point getXY(double bearing, double distance) {
         double absBearing = bearing + getHeading();
         absBearing = Math.toRadians(absBearing);
-        return new double[]{distance * Math.sin(absBearing) + getX(), distance * Math.cos(absBearing) + getY()};
+        double[] pointArray = {distance * Math.sin(absBearing) + getX(), distance * Math.cos(absBearing) + getY()};
+        return new Point(pointArray[0], pointArray[1]);
     }
 }
