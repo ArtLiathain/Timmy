@@ -109,11 +109,9 @@ public class Timmy4Ever extends Robot {
     private boolean isAhead(Point point) {
         double[] sides = getTriangleSides(point);
 
-        System.out.println("Sides before square: " + Arrays.toString(sides));
         for (int i = 0; i < sides.length; i++) {
             sides[i] = Math.pow(sides[i], 2);
         }
-        System.out.println("Sides after square: " + Arrays.toString(sides));
 
         return (sides[2] <= sides[0] + sides[1]);
     }
@@ -133,10 +131,6 @@ public class Timmy4Ever extends Robot {
 
         Point wallPoint = getViewedWallPoint(),
                 botPoint = new Point(getX(), getY());
-
-        System.out.println("Point: " + point.toString()
-        + "\nWall: " + wallPoint +
-        "\nBot: " + botPoint);
 
         sides[0] = botPoint.lengthTo(wallPoint);
         sides[1] = botPoint.lengthTo(point);
