@@ -4,11 +4,12 @@ import robocode.Robot;
 import robocode.ScannedRobotEvent;
 
 import java.lang.Math;
+import java.util.Arrays;
 
 public class Timmy4Ever extends Robot {
     private Quad sentryQuad;
-    private final double borderX = getBattleFieldWidth();
-    private final double borderY = getBattleFieldHeight();
+    private double borderX;
+    private double borderY;
 
     enum Quad {
         TOP_LEFT,
@@ -70,6 +71,8 @@ public class Timmy4Ever extends Robot {
 
     @Override
     public void run() {
+        borderX = getBattleFieldWidth();
+        borderY = getBattleFieldHeight();
         // Main method
         findSentry(45);
         Point safePoint = getSafePoint();
@@ -102,9 +105,11 @@ public class Timmy4Ever extends Robot {
     private boolean isAhead(Point point) {
         double[] sides = getTriangleSides(point);
 
+        System.out.println("Sides before square: " + Arrays.toString(sides));
         for (int i = 0; i < sides.length; i++) {
             sides[i] = Math.pow(sides[i], 2);
         }
+        System.out.println("Sides after square: " + Arrays.toString(sides));
 
         return (sides[2] <= sides[0] + sides[1]);
     }
@@ -138,7 +143,7 @@ public class Timmy4Ever extends Robot {
      */
     private Point getViewedWallPoint() {
         double myHeading = getStandardHeading();
-        Point wallXY = new Point();
+        Point wallPoint = new Point();
         Point bot = new Point(getX(), getY());
 
         // Equation of the line from robot's heading
@@ -148,24 +153,24 @@ public class Timmy4Ever extends Robot {
         // Sets the wall's X/Y coordinate according to which wall the robot is looking at (Remains -1 if unchanged)
         switch (getViewedWall()) {
             case TOP:
-                wallXY.setX((borderY - c) / m);
-                wallXY.setY(borderY);
+                wallPoint.setX((borderY - c) / m);
+                wallPoint.setY(borderY);
                 break;
             case RIGHT:
-                wallXY.setX(borderX);
-                wallXY.setY((m * borderX) + c);
+                wallPoint.setX(borderX);
+                wallPoint.setY((m * borderX) + c);
                 break;
             case BOTTOM:
-                wallXY.setX(c / m);
-                wallXY.setY(0);
+                wallPoint.setX(c / m);
+                wallPoint.setY(0);
                 break;
             case LEFT:
-                wallXY.setX(0);
-                wallXY.setY(c);
+                wallPoint.setX(0);
+                wallPoint.setY(c);
                 break;
         }
 
-        return wallXY;
+        return wallPoint;
     }
 
     /**
@@ -250,30 +255,31 @@ public class Timmy4Ever extends Robot {
      * @return [Point]
      */
     private Point getSafePoint() {
-        Point safeXY = new Point();
+        Point safePoint = new Point();
         double padding = 30;
         double right = getBattleFieldWidth() - padding;
         double top = getBattleFieldHeight() - padding;
 
         switch (sentryQuad) {
             case TOP_RIGHT:
-                safeXY.setX(padding);
-                safeXY.setY(padding);
+                safePoint.setX(padding);
+                safePoint.setY(padding);
                 break;
             case TOP_LEFT:
-                safeXY.setX(right);
-                safeXY.setY(padding);
+                safePoint.setX(right);
+                safePoint.setY(padding);
                 break;
             case BOTTOM_LEFT:
-                safeXY.setX(right);
-                safeXY.setY(top);
+                safePoint.setX(right);
+                safePoint.setY(top);
                 break;
             case BOTTOM_RIGHT:
-                safeXY.setX(padding);
-                safeXY.setY(top);
+                safePoint.setX(padding);
+                safePoint.setY(top);
                 break;
         }
-        return safeXY;
+
+        return safePoint;
     }
 
     /**
