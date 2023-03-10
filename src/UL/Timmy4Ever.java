@@ -130,10 +130,9 @@ public class Timmy4Ever extends Robot {
         double m = Math.tan(myHeadingRadians), c = bot.getY() - (m * bot.getX());
 
         boolean aboveBot = (point.getY() > (m * point.getX()) + c),
-        leftOfBot = !(facingLeft == aboveBot);
+                leftOfBot = !(facingLeft == aboveBot);
 
-        System.out.println("Point on left side of bot: " + leftOfBot);
-        return true;
+        return (aheadOfBot == leftOfBot);
     }
 
     /**
