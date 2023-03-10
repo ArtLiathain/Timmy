@@ -51,13 +51,6 @@ public class Timmy4Ever extends Robot {
             return Math.sqrt(length);
         }
 
-        public double slopeTo(Point point) {
-            double rise = point.y - this.y,
-                    run = point.x - this.y;
-
-            return (rise / run);
-        }
-
         public double getX() {
             return x;
         }
@@ -116,20 +109,18 @@ public class Timmy4Ever extends Robot {
     }
 
     /**
-     * Evaluates if the robot should turn left to be aligned with a point
-     *
+     * Evaluates if the robot should turn left to be aligned with a given point
+     * @param point [Point] given point
      * @return [boolean]
      */
     private boolean shouldTurnLeft(Point point) {
         Point bot = new Point(getX(), getY());
-        double myHeading = getStandardHeading();
+        double myHeading = getStandardHeading(),
+                m = Math.tan(Math.toRadians(myHeading)),
+                c = bot.getY() - (m * bot.getX());
         boolean facingLeft = (myHeading > 90 && myHeading < 270),
-                aheadOfBot = isAhead(point);
-
-        double myHeadingRadians = Math.toRadians(myHeading);
-        double m = Math.tan(myHeadingRadians), c = bot.getY() - (m * bot.getX());
-
-        boolean aboveBot = (point.getY() > (m * point.getX()) + c),
+                aboveBot = (point.getY() > (m * point.getX()) + c),
+                aheadOfBot = isAhead(point),
                 leftOfBot = !(facingLeft == aboveBot);
 
         return (aheadOfBot == leftOfBot);
