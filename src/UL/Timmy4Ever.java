@@ -4,7 +4,6 @@ import robocode.Robot;
 import robocode.ScannedRobotEvent;
 
 import java.lang.Math;
-import java.util.Arrays;
 
 public class Timmy4Ever extends Robot {
     private Quad sentryQuad;
@@ -104,22 +103,30 @@ public class Timmy4Ever extends Robot {
      */
     private boolean isAhead(Point point) {
         double[] sides = getTriangleSides(point);
-
-        for (int i = 0; i < sides.length; i++) {
-            sides[i] = Math.pow(sides[i], 2);
-        }
+        squareAll(sides);
 
         return (sides[2] <= sides[0] + sides[1]);
     }
 
     /**
-     * Evaluates if the robot is facing the left side of the arena
+     * Evaluates if the robot should turn left to be aligned with a point
+     *
      * @return [boolean]
      */
-    private boolean isFacingLeft() {
+    private boolean shouldTurnLeft(Point point) {
+        Point bot = new Point(getX(), getY());
         double myHeading = getStandardHeading();
+        boolean facingLeft = (myHeading > 90 && myHeading < 270),
+                aboveBot = (point.getY() > bot.getY()),
+                aheadOfBot = isAhead(point);
 
-        return (myHeading > 90 && myHeading < 270);
+
+        System.out.println("Facing left? " + facingLeft);
+        if (facingLeft) {
+            return aboveBot != aheadOfBot;
+        } else {
+            return aboveBot == aheadOfBot;
+        }
     }
 
     /**
@@ -143,6 +150,17 @@ public class Timmy4Ever extends Robot {
         sides[2] = point.lengthTo(wallPoint);
 
         return sides;
+    }
+
+    /**
+     * Squares all individual elements within an array
+     *
+     * @param array [double] Array to be squared
+     */
+    private void squareAll(double[] array) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Math.pow(array[i], 2);
+        }
     }
 
     /**
@@ -239,6 +257,22 @@ public class Timmy4Ever extends Robot {
         if (angle > 90) {
             angle = 180 - angle;
         }
+
+        System.out.println("Adjusted angle (if needed): " + angle);
+
+        System.out.println("Should turn left? " + shouldTurnLeft(destination));
+
+        if (shouldTurnLeft(destination)) {
+            turnLeft(angle);
+        } else {
+            turnRight(angle);
+        }
+
+        if (isAhead(destination)) {
+            ahead(distance);
+        } else {
+            back(distance);
+        }
     }
 
     /**
@@ -250,10 +284,13 @@ public class Timmy4Ever extends Robot {
     private double getTurnAngle(Point point) {
         double angleDegrees, numerator, denominator;
         double[] sides = getTriangleSides(point);
+        squareAll(sides);
 
         numerator = sides[0] + sides[1] - sides[2];
         denominator = 2 * Math.sqrt(sides[0]) * Math.sqrt(sides[1]);
         angleDegrees = Math.toDegrees(Math.acos(numerator / denominator));
+
+        System.out.println("Turn angle: " + angleDegrees);
 
         return angleDegrees;
     }
