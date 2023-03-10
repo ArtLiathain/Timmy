@@ -40,16 +40,20 @@ public class Timmy4Ever extends Robot {
         /**
          * Calculates the distance to a given point
          *
-         * @param destXY [Point] Given point to calculate the distance to
+         * @param point [Point] Second point
          * @return [double] Length of the line
          */
-        public double lengthTo(Point destXY) {
+        public double lengthTo(Point point) {
             double length = 0;
 
-            length += Math.pow(this.x - destXY.getX(), 2);
-            length += Math.pow(this.y - destXY.getY(), 2);
+            length += Math.pow(this.x - point.getX(), 2);
+            length += Math.pow(this.y - point.getY(), 2);
 
             return Math.sqrt(length);
+        }
+
+        public String toString() {
+            return ("x: " + this.x + " y " + this.y);
         }
 
         public double getX() {
@@ -127,11 +131,16 @@ public class Timmy4Ever extends Robot {
     private double[] getTriangleSides(Point point) {
         double[] sides = new double[3];
 
-        Point wall = getViewedWallPoint(), bot = new Point(getX(), getY());
+        Point wallPoint = getViewedWallPoint(),
+                botPoint = new Point(getX(), getY());
 
-        sides[0] = bot.lengthTo(wall);
-        sides[1] = bot.lengthTo(point);
-        sides[2] = point.lengthTo(wall);
+        System.out.println("Point: " + point.toString()
+        + "\nWall: " + wallPoint +
+        "\nBot: " + botPoint);
+
+        sides[0] = botPoint.lengthTo(wallPoint);
+        sides[1] = botPoint.lengthTo(point);
+        sides[2] = point.lengthTo(wallPoint);
 
         return sides;
     }
@@ -161,7 +170,7 @@ public class Timmy4Ever extends Robot {
                 wallPoint.setY((m * borderX) + c);
                 break;
             case BOTTOM:
-                wallPoint.setX(c / m);
+                wallPoint.setX(-c / m);
                 wallPoint.setY(0);
                 break;
             case LEFT:
