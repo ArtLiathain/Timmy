@@ -52,10 +52,6 @@ public class Timmy4Ever extends Robot {
             return Math.sqrt(length);
         }
 
-        public String toString() {
-            return ("x: " + this.x + " y " + this.y);
-        }
-
         public double getX() {
             return x;
         }
@@ -114,6 +110,16 @@ public class Timmy4Ever extends Robot {
         }
 
         return (sides[2] <= sides[0] + sides[1]);
+    }
+
+    /**
+     * Evaluates if the robot is facing the left side of the arena
+     * @return [boolean]
+     */
+    private boolean isFacingLeft() {
+        double myHeading = getStandardHeading();
+
+        return (myHeading > 90 && myHeading < 270);
     }
 
     /**
