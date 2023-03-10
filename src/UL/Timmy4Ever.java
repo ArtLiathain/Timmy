@@ -51,12 +51,19 @@ public class Timmy4Ever extends Robot {
             return Math.sqrt(length);
         }
 
+        public double slopeTo(Point point) {
+            double rise = point.y - this.y,
+                    run = point.x - this.y;
+
+            return (rise / run);
+        }
+
         public double getX() {
             return x;
         }
 
-        public void setX(double posX) {
-            this.x = posX;
+        public void setX(double x) {
+            this.x = x;
         }
 
         public double getY() {
@@ -117,16 +124,16 @@ public class Timmy4Ever extends Robot {
         Point bot = new Point(getX(), getY());
         double myHeading = getStandardHeading();
         boolean facingLeft = (myHeading > 90 && myHeading < 270),
-                aboveBot = (point.getY() > bot.getY()),
                 aheadOfBot = isAhead(point);
 
+        double myHeadingRadians = Math.toRadians(myHeading);
+        double m = Math.tan(myHeadingRadians), c = bot.getY() - (m * bot.getX());
 
-        System.out.println("Facing left? " + facingLeft);
-        if (facingLeft) {
-            return aboveBot != aheadOfBot;
-        } else {
-            return aboveBot == aheadOfBot;
-        }
+        boolean aboveBot = (point.getY() > (m * point.getX()) + c),
+        leftOfBot = !(facingLeft == aboveBot);
+
+        System.out.println("Point on left side of bot: " + leftOfBot);
+        return true;
     }
 
     /**
