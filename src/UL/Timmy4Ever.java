@@ -76,6 +76,7 @@ public class Timmy4Ever extends Robot {
         findSentry(45);
         Point safePoint = getSafePoint();
         goTo(safePoint);
+        goTo(new Point(400,400));
     }
 
     @Override
@@ -252,10 +253,6 @@ public class Timmy4Ever extends Robot {
         if (angle > 90) {
             angle = 180 - angle;
         }
-
-        System.out.println("Adjusted angle (if needed): " + angle);
-
-        System.out.println("Should turn left? " + shouldTurnLeft(destination));
 
         if (shouldTurnLeft(destination)) {
             turnLeft(angle);
