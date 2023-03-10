@@ -75,9 +75,7 @@ public class Timmy4Ever extends Robot {
         // Main method
         findSentry(45);
         Point safePoint = getSafePoint();
-        System.out.println("Should move forwards? " + isAhead(safePoint));
         goTo(safePoint);
-        getViewedWallPoint();
     }
 
     @Override
