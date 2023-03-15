@@ -76,7 +76,7 @@ public class Timmy4Ever extends Robot {
         findSentry(45);
         Point safePoint = getSafePoint();
         goTo(safePoint);
-        goTo(new Point(400,400));
+        goTo(new Point(770, 30));
     }
 
     @Override
@@ -244,6 +244,10 @@ public class Timmy4Ever extends Robot {
         }
     }
 
+    /**
+     * Moves the robot to a given point. Will be skipped if a collision occurs
+     * @param destination [Point] Destination point
+     */
     private void goTo(Point destination) {
         double angle = getTurnAngle(destination), distance;
         Point bot = new Point(getX(), getY());
